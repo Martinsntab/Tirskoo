@@ -1,0 +1,14 @@
+{
+  "name": "tirskoo",
+  "version": "5.0.0",
+  "description": "Tirskoo — see what's actually gotten done, without having to call and ask.",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "start": "node tirskoo.js"
+  },
+  "dependencies": {}
+}
