@@ -1,0 +1,283 @@
+<title>Courtside Scoreboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700;900&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap">
+<style>
+  :root{
+    --ground:#0a0c0b;
+    --panel:#131715;
+    --panel-edge:#242b28;
+    --ink:#e8ece9;
+    --muted:#7d8a84;
+    --home:#ffb020;
+    --away:#4fc3f7;
+    --home-dim:#3a2c10;
+    --away-dim:#12303d;
+    color-scheme:dark;
+  }
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"IBM Plex Sans Condensed","Helvetica Neue",Arial,sans-serif;
+    -webkit-user-select:none;user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    overscroll-behavior:none;
+  }
+  #app{
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    padding:0 12px;
+    box-sizing:border-box;
+  }
+
+  .courts{
+    flex:1;
+    min-height:0;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    padding-block:10px;
+  }
+
+  .side{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    min-width:0;
+    background:var(--panel);
+    border:1px solid var(--panel-edge);
+    border-radius:14px;
+    padding:10px;
+    box-sizing:border-box;
+  }
+  .side.home{border-top:4px solid var(--home);}
+  .side.away{border-top:4px solid var(--away);}
+
+  .name{
+    width:100%;
+    box-sizing:border-box;
+    background:transparent;
+    border:0;
+    border-bottom:1px dashed transparent;
+    color:var(--muted);
+    font:600 15px/1.1 "IBM Plex Sans Condensed",sans-serif;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    text-align:center;
+    padding:4px 0;
+    min-width:0;
+  }
+  .name:focus{outline:none;border-bottom-color:var(--panel-edge);color:var(--ink);}
+
+  .score{
+    font-family:"Saira Condensed","Arial Narrow",sans-serif;
+    font-weight:900;
+    font-variant-numeric:tabular-nums;
+    font-size:clamp(64px,22vw,190px);
+    line-height:.86;
+    text-align:center;
+    letter-spacing:-.02em;
+    padding:2px 0 6px;
+  }
+  .home .score{color:var(--home);}
+  .away .score{color:var(--away);}
+
+  .keys{
+    flex:1;
+    min-height:0;
+    display:grid;
+    grid-template-rows:1.35fr 1fr 1fr;
+    gap:8px;
+  }
+  .add{
+    border:1px solid var(--panel-edge);
+    border-radius:12px;
+    background:#1b211e;
+    color:var(--ink);
+    font-family:"Saira Condensed","Arial Narrow",sans-serif;
+    font-weight:700;
+    font-size:clamp(24px,7vw,44px);
+    line-height:1;
+    cursor:pointer;
+    transition:transform .07s ease, background .12s ease;
+    min-height:52px;
+  }
+  .home .add{background:var(--home-dim);border-color:#4a3714;color:#ffd48a;}
+  .away .add{background:var(--away-dim);border-color:#163f50;color:#a9e2fb;}
+  .home .add.big{background:var(--home);color:#1a1205;border-color:var(--home);}
+  .away .add.big{background:var(--away);color:#04212c;border-color:var(--away);}
+  .add:active{transform:scale(.96);}
+  .add:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+
+  .bar{
+    display:flex;
+    gap:10px;
+    align-items:stretch;
+    padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));
+  }
+  .bar button{
+    flex:1;
+    background:transparent;
+    border:1px solid var(--panel-edge);
+    border-radius:11px;
+    color:var(--muted);
+    font:600 14px/1 "IBM Plex Sans Condensed",sans-serif;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    padding:14px 8px;
+    cursor:pointer;
+  }
+  .bar button:active{background:var(--panel);color:var(--ink);}
+  .bar button:disabled{opacity:.3;cursor:default;}
+  .bar button:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+  #reset.armed{border-color:#c2422d;color:#ff7a5f;}
+
+  @media (prefers-reduced-motion:reduce){.add{transition:none;}}
+</style>
+
+<div id="app">
+  <div class="courts">
+    <section class="side home">
+      <input id="name-a" class="name" value="HOME" aria-label="Home team name" spellcheck="false" maxlength="10">
+      <div id="score-a" class="score" aria-live="polite">0</div>
+      <div class="keys">
+        <button class="add big" data-team="a" data-pts="2">+2</button>
+        <button class="add" data-team="a" data-pts="3">+3</button>
+        <button class="add" data-team="a" data-pts="1">+1</button>
+      </div>
+    </section>
+
+    <section class="side away">
+      <input id="name-b" class="name" value="AWAY" aria-label="Away team name" spellcheck="false" maxlength="10">
+      <div id="score-b" class="score" aria-live="polite">0</div>
+      <div class="keys">
+        <button class="add big" data-team="b" data-pts="2">+2</button>
+        <button class="add" data-team="b" data-pts="3">+3</button>
+        <button class="add" data-team="b" data-pts="1">+1</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="bar">
+    <button id="undo" disabled>Undo</button>
+    <button id="reset">Reset</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY = "courtside-scoreboard-v1";
+  var state = { a:0, b:0, nameA:"HOME", nameB:"AWAY", log:[] };
+
+  var el = {
+    a: document.getElementById("score-a"),
+    b: document.getElementById("score-b"),
+    nameA: document.getElementById("name-a"),
+    nameB: document.getElementById("name-b"),
+    undo: document.getElementById("undo"),
+    reset: document.getElementById("reset")
+  };
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(!raw) return;
+      var s = JSON.parse(raw);
+      if(s && typeof s.a === "number" && typeof s.b === "number"){
+        state.a = s.a; state.b = s.b;
+        state.nameA = s.nameA || "HOME";
+        state.nameB = s.nameB || "AWAY";
+        state.log = Array.isArray(s.log) ? s.log : [];
+      }
+    }catch(e){}
+  }
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  }
+  function render(){
+    el.a.textContent = state.a;
+    el.b.textContent = state.b;
+    el.nameA.value = state.nameA;
+    el.nameB.value = state.nameB;
+    el.undo.disabled = state.log.length === 0;
+  }
+  function buzz(ms){
+    try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){}
+  }
+
+  document.querySelectorAll(".add").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var team = btn.dataset.team;
+      var pts = parseInt(btn.dataset.pts, 10);
+      state[team] += pts;
+      state.log.push([team, pts]);
+      if(state.log.length > 200) state.log.shift();
+      disarmReset();
+      buzz(12);
+      render(); save();
+    });
+  });
+
+  el.undo.addEventListener("click", function(){
+    var last = state.log.pop();
+    if(!last) return;
+    state[last[0]] -= last[1];
+    disarmReset();
+    buzz(12);
+    render(); save();
+  });
+
+  var armed = false, armTimer = null;
+  function disarmReset(){
+    armed = false;
+    clearTimeout(armTimer);
+    el.reset.classList.remove("armed");
+    el.reset.textContent = "Reset";
+  }
+  el.reset.addEventListener("click", function(){
+    if(!armed){
+      armed = true;
+      el.reset.classList.add("armed");
+      el.reset.textContent = "Sure?";
+      armTimer = setTimeout(disarmReset, 3000);
+      return;
+    }
+    state.a = 0; state.b = 0; state.log = [];
+    disarmReset();
+    buzz([12,60,12]);
+    render(); save();
+  });
+
+  el.nameA.addEventListener("input", function(){ state.nameA = el.nameA.value; save(); });
+  el.nameB.addEventListener("input", function(){ state.nameB = el.nameB.value; save(); });
+  el.nameA.addEventListener("focus", function(){ el.nameA.select(); });
+  el.nameB.addEventListener("focus", function(){ el.nameB.select(); });
+
+  // Keyboard, for when it's running on a laptop at the side of the court.
+  document.addEventListener("keydown", function(e){
+    if(e.target.tagName === "INPUT") return;
+    var map = { "1":["a",1], "2":["a",2], "3":["a",3], "8":["b",1], "9":["b",2], "0":["b",3] };
+    if(map[e.key]){
+      var m = map[e.key];
+      state[m[0]] += m[1];
+      state.log.push([m[0], m[1]]);
+      render(); save();
+    } else if(e.key === "Backspace" || e.key === "z"){
+      el.undo.click();
+    }
+  });
+
+  function start(snap){
+    if(snap && typeof snap.a === "number"){ state = snap; }
+    else { load(); }
+    render();
+  }
+  try{ window.claude && window.claude.hot && window.claude.hot.snapshot(function(){ return state; }); }catch(e){}
+  if(window.claude && window.claude.hot && window.claude.hot.ready){
+    window.claude.hot.ready(start);
+  } else {
+    start(window.claude && window.claude.hot ? window.claude.hot.data : null);
+  }
+})();
+</script>
