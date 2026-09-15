@@ -11,6 +11,8 @@
     --away:#4fc3f7;
     --home-dim:#3a2c10;
     --away-dim:#12303d;
+    --live:#5fd08a;
+    --danger:#ff7a5f;
     color-scheme:dark;
   }
   html,body{height:100%;}
@@ -23,85 +25,79 @@
     -webkit-tap-highlight-color:transparent;
     overscroll-behavior:none;
   }
-  #app{
-    height:100%;
-    display:flex;
-    flex-direction:column;
-    padding:0 12px;
-    box-sizing:border-box;
-  }
+  button{font-family:inherit;}
 
-  .courts{
-    flex:1;
-    min-height:0;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    padding-block:10px;
-  }
+  #app{height:100%;display:flex;flex-direction:column;padding:0 12px;box-sizing:border-box;}
 
+  /* ---- status strip ---- */
+  .strip{
+    display:flex;align-items:center;gap:8px;
+    padding-top:calc(8px + env(safe-area-inset-top,0px));
+    padding-bottom:6px;
+    min-height:34px;
+  }
+  .pill{
+    display:inline-flex;align-items:center;gap:6px;
+    font:600 11px/1 "IBM Plex Sans Condensed",sans-serif;
+    letter-spacing:.18em;text-transform:uppercase;
+    padding:6px 9px;border-radius:999px;
+    border:1px solid var(--panel-edge);color:var(--muted);
+    white-space:nowrap;
+  }
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:none;}
+  .pill.scoring{border-color:#2d5f42;color:var(--live);}
+  .pill.scoring .dot{background:var(--live);}
+  .pill.viewing .dot{background:var(--away);}
+  .series{
+    margin-left:auto;
+    font:600 12px/1 "IBM Plex Sans Condensed",sans-serif;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+    font-variant-numeric:tabular-nums;text-align:right;
+    white-space:nowrap;
+  }
+  #claim{
+    background:transparent;border:1px solid var(--panel-edge);border-radius:999px;
+    color:var(--ink);font:600 11px/1 "IBM Plex Sans Condensed",sans-serif;
+    letter-spacing:.16em;text-transform:uppercase;padding:7px 11px;cursor:pointer;
+    white-space:nowrap;
+  }
+  #claim:disabled{opacity:.35;cursor:default;}
+  #claim:not(:disabled):active{background:var(--panel);}
+
+  /* ---- courts ---- */
+  .courts{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:10px;}
   .side{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    min-width:0;
-    background:var(--panel);
-    border:1px solid var(--panel-edge);
-    border-radius:14px;
-    padding:10px;
-    box-sizing:border-box;
+    display:flex;flex-direction:column;gap:8px;min-width:0;
+    background:var(--panel);border:1px solid var(--panel-edge);
+    border-radius:14px;padding:10px;box-sizing:border-box;
   }
   .side.home{border-top:4px solid var(--home);}
   .side.away{border-top:4px solid var(--away);}
 
   .name{
-    width:100%;
-    box-sizing:border-box;
-    background:transparent;
-    border:0;
-    border-bottom:1px dashed transparent;
-    color:var(--muted);
+    width:100%;box-sizing:border-box;background:transparent;border:0;
+    border-bottom:1px dashed transparent;color:var(--muted);
     font:600 15px/1.1 "IBM Plex Sans Condensed",sans-serif;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    text-align:center;
-    padding:4px 0;
-    min-width:0;
+    letter-spacing:.14em;text-transform:uppercase;text-align:center;
+    padding:4px 0;min-width:0;
   }
   .name:focus{outline:none;border-bottom-color:var(--panel-edge);color:var(--ink);}
+  .name:disabled{opacity:1;}
 
   .score{
-    font-family:"Saira Condensed","Arial Narrow",sans-serif;
-    font-weight:900;
-    font-variant-numeric:tabular-nums;
-    font-size:clamp(64px,22vw,190px);
-    line-height:.86;
-    text-align:center;
-    letter-spacing:-.02em;
-    padding:2px 0 6px;
+    font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:900;
+    font-variant-numeric:tabular-nums;font-size:clamp(58px,20vw,180px);
+    line-height:.86;text-align:center;letter-spacing:-.02em;padding:2px 0 6px;
   }
   .home .score{color:var(--home);}
   .away .score{color:var(--away);}
 
-  .keys{
-    flex:1;
-    min-height:0;
-    display:grid;
-    grid-template-rows:1.35fr 1fr 1fr;
-    gap:8px;
-  }
+  .keys{flex:1;min-height:0;display:grid;grid-template-rows:1.35fr 1fr 1fr;gap:8px;}
   .add{
-    border:1px solid var(--panel-edge);
-    border-radius:12px;
-    background:#1b211e;
-    color:var(--ink);
-    font-family:"Saira Condensed","Arial Narrow",sans-serif;
-    font-weight:700;
-    font-size:clamp(24px,7vw,44px);
-    line-height:1;
-    cursor:pointer;
-    transition:transform .07s ease, background .12s ease;
-    min-height:52px;
+    border:1px solid var(--panel-edge);border-radius:12px;background:#1b211e;color:var(--ink);
+    font-family:"Saira Condensed","Arial Narrow",sans-serif;font-weight:700;
+    font-size:clamp(22px,6.5vw,42px);line-height:1;cursor:pointer;
+    transition:transform .07s ease,opacity .15s ease;min-height:48px;
   }
   .home .add{background:var(--home-dim);border-color:#4a3714;color:#ffd48a;}
   .away .add{background:var(--away-dim);border-color:#163f50;color:#a9e2fb;}
@@ -109,34 +105,81 @@
   .away .add.big{background:var(--away);color:#04212c;border-color:var(--away);}
   .add:active{transform:scale(.96);}
   .add:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+  .add:disabled{opacity:.22;cursor:default;transform:none;}
 
-  .bar{
-    display:flex;
-    gap:10px;
-    align-items:stretch;
-    padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));
-  }
+  /* ---- bottom bar ---- */
+  .bar{display:flex;gap:8px;align-items:stretch;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));}
   .bar button{
-    flex:1;
-    background:transparent;
-    border:1px solid var(--panel-edge);
-    border-radius:11px;
-    color:var(--muted);
-    font:600 14px/1 "IBM Plex Sans Condensed",sans-serif;
-    letter-spacing:.16em;
-    text-transform:uppercase;
-    padding:14px 8px;
-    cursor:pointer;
+    flex:1;background:transparent;border:1px solid var(--panel-edge);border-radius:11px;
+    color:var(--muted);font:600 13px/1 "IBM Plex Sans Condensed",sans-serif;
+    letter-spacing:.14em;text-transform:uppercase;padding:14px 6px;cursor:pointer;
+    white-space:nowrap;
   }
-  .bar button:active{background:var(--panel);color:var(--ink);}
-  .bar button:disabled{opacity:.3;cursor:default;}
+  .bar button:active:not(:disabled){background:var(--panel);color:var(--ink);}
+  .bar button:disabled{opacity:.28;cursor:default;}
   .bar button:focus-visible{outline:2px solid #fff;outline-offset:2px;}
-  #reset.armed{border-color:#c2422d;color:#ff7a5f;}
+  .bar button.armed{border-color:#c2422d;color:var(--danger);}
+
+  /* ---- history sheet ---- */
+  .sheet{
+    position:fixed;inset:0;background:rgba(6,8,7,.86);
+    display:flex;align-items:flex-end;justify-content:center;z-index:10;
+  }
+  .sheet-inner{
+    width:100%;max-width:520px;max-height:78%;
+    background:var(--panel);border:1px solid var(--panel-edge);
+    border-radius:16px 16px 0 0;
+    padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));
+    box-sizing:border-box;display:flex;flex-direction:column;gap:12px;
+  }
+  .sheet h2{
+    margin:0;font:600 13px/1 "IBM Plex Sans Condensed",sans-serif;
+    letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  }
+  .tally{display:flex;gap:8px;}
+  .tally div{
+    flex:1;border:1px solid var(--panel-edge);border-radius:10px;padding:10px;
+    text-align:center;
+  }
+  .tally b{
+    display:block;font-family:"Saira Condensed",sans-serif;font-weight:900;
+    font-size:30px;line-height:1;font-variant-numeric:tabular-nums;
+  }
+  .tally.home b{color:var(--home);}
+  .tally.away b{color:var(--away);}
+  .tally span{
+    font:600 10px/1.4 "IBM Plex Sans Condensed",sans-serif;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  }
+  .log{overflow-y:auto;display:flex;flex-direction:column;gap:1px;min-height:0;}
+  .log-row{
+    display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:baseline;
+    padding:9px 2px;border-bottom:1px solid #1c211f;
+    font:500 14px/1.2 "IBM Plex Sans Condensed",sans-serif;
+  }
+  .log-row .no{color:var(--muted);font-size:11px;letter-spacing:.1em;font-variant-numeric:tabular-nums;}
+  .log-row .fin{
+    font-family:"Saira Condensed",sans-serif;font-weight:700;font-size:17px;
+    font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  }
+  .log-row .who{color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:12px;overflow:hidden;text-overflow:ellipsis;}
+  .empty{color:var(--muted);font-size:14px;padding:18px 2px;}
+  .sheet-close{
+    border:1px solid var(--panel-edge);background:transparent;border-radius:11px;
+    color:var(--ink);font:600 13px/1 "IBM Plex Sans Condensed",sans-serif;
+    letter-spacing:.14em;text-transform:uppercase;padding:14px;cursor:pointer;
+  }
 
   @media (prefers-reduced-motion:reduce){.add{transition:none;}}
 </style>
 
 <div id="app">
+  <div class="strip">
+    <span id="role" class="pill"><span class="dot"></span><span id="role-text">Connecting</span></span>
+    <button id="claim" hidden>Take control</button>
+    <span id="series" class="series">Game 1</span>
+  </div>
+
   <div class="courts">
     <section class="side home">
       <input id="name-a" class="name" value="HOME" aria-label="Home team name" spellcheck="false" maxlength="10">
@@ -147,7 +190,6 @@
         <button class="add" data-team="a" data-pts="1">+1</button>
       </div>
     </section>
-
     <section class="side away">
       <input id="name-b" class="name" value="AWAY" aria-label="Away team name" spellcheck="false" maxlength="10">
       <div id="score-b" class="score" aria-live="polite">0</div>
@@ -161,122 +203,389 @@
 
   <div class="bar">
     <button id="undo" disabled>Undo</button>
-    <button id="reset">Reset</button>
+    <button id="endgame">End game</button>
+    <button id="games">Games</button>
+  </div>
+</div>
+
+<div id="sheet" class="sheet" hidden>
+  <div class="sheet-inner">
+    <h2>Games played</h2>
+    <div class="tally">
+      <div class="home"><b id="wins-a">0</b><span id="wins-a-label">Home</span></div>
+      <div><b id="games-count">0</b><span>Played</span></div>
+      <div class="away"><b id="wins-b">0</b><span id="wins-b-label">Away</span></div>
+    </div>
+    <div id="log" class="log"></div>
+    <button id="sheet-close" class="sheet-close">Close</button>
   </div>
 </div>
 
 <script>
 (function(){
-  var KEY = "courtside-scoreboard-v1";
-  var state = { a:0, b:0, nameA:"HOME", nameB:"AWAY", log:[] };
+  "use strict";
 
-  var el = {
-    a: document.getElementById("score-a"),
-    b: document.getElementById("score-b"),
-    nameA: document.getElementById("name-a"),
-    nameB: document.getElementById("name-b"),
-    undo: document.getElementById("undo"),
-    reset: document.getElementById("reset")
-  };
+  var LS_STATE = "courtside-v2-state";
+  var LS_ID    = "courtside-v2-id";
+  var LEASE_MS = 45000;   // how long a scorer's claim is good for
+  var RENEW_MS = 18000;   // scorer refreshes well inside the lease
+  var STALE_MS = 60000;   // after this with no refresh, control is up for grabs
 
-  function load(){
+  // ---- identity (this browser, not a platform account) ----
+  var myId;
+  try{
+    myId = localStorage.getItem(LS_ID);
+    if(!myId){ myId = "s" + Math.random().toString(36).slice(2,10); localStorage.setItem(LS_ID, myId); }
+  }catch(e){ myId = "s" + Math.random().toString(36).slice(2,10); }
+
+  // ---- state ----
+  var game = { a:0, b:0, nameA:"HOME", nameB:"AWAY", log:[], gameNo:1 };
+  var history = { results:[] };          // [{a,b,nameA,nameB,at}]
+  var role = "solo";                     // solo | scorer | viewer
+  var control = { holder:null, renewedAt:0 };
+  var db = null, gameRef = null, ctrlRef = null, histRef = null;
+  var renewTimer = null, staleTimer = null;
+
+  var el = {};
+  ["score-a","score-b","name-a","name-b","undo","endgame","games","role","role-text","claim",
+   "series","sheet","sheet-close","log","wins-a","wins-b","games-count","wins-a-label","wins-b-label"
+  ].forEach(function(id){ el[id] = document.getElementById(id); });
+  var addBtns = Array.prototype.slice.call(document.querySelectorAll(".add"));
+
+  function canScore(){ return role === "scorer" || role === "solo"; }
+  function buzz(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
+
+  // ---- local persistence (solo mode, and a cache everywhere) ----
+  function loadLocal(){
     try{
-      var raw = localStorage.getItem(KEY);
+      var raw = localStorage.getItem(LS_STATE);
       if(!raw) return;
       var s = JSON.parse(raw);
-      if(s && typeof s.a === "number" && typeof s.b === "number"){
-        state.a = s.a; state.b = s.b;
-        state.nameA = s.nameA || "HOME";
-        state.nameB = s.nameB || "AWAY";
-        state.log = Array.isArray(s.log) ? s.log : [];
+      if(s && s.game && typeof s.game.a === "number"){
+        game = s.game;
+        if(!Array.isArray(game.log)) game.log = [];
+        if(typeof game.gameNo !== "number") game.gameNo = 1;
       }
+      if(s && s.history && Array.isArray(s.history.results)) history = s.history;
     }catch(e){}
   }
-  function save(){
-    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-  }
-  function render(){
-    el.a.textContent = state.a;
-    el.b.textContent = state.b;
-    el.nameA.value = state.nameA;
-    el.nameB.value = state.nameB;
-    el.undo.disabled = state.log.length === 0;
-  }
-  function buzz(ms){
-    try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){}
+  function saveLocal(){
+    try{ localStorage.setItem(LS_STATE, JSON.stringify({game:game, history:history})); }catch(e){}
   }
 
-  document.querySelectorAll(".add").forEach(function(btn){
+  // ---- shared writes, one in flight at a time per document ----
+  function writer(getRef, getBody){
+    var busy = false, again = false;
+    return function flush(){
+      var ref = getRef();
+      if(!ref) return;
+      if(busy){ again = true; return; }
+      busy = true;
+      ref.set(getBody()).catch(function(){}).then(function(){
+        busy = false;
+        if(again){ again = false; flush(); }
+      });
+    };
+  }
+  var gameWrites = 0;
+  var pushGame = writer(function(){ return gameRef; }, function(){
+    return { a:game.a, b:game.b, nameA:game.nameA, nameB:game.nameB,
+             log:game.log, gameNo:game.gameNo, by:myId, at:Date.now() };
+  });
+  var pushHistory = writer(function(){ return histRef; }, function(){
+    return { results:history.results };
+  });
+
+  function commit(){
+    render();
+    saveLocal();
+    if(role === "scorer"){
+      gameWrites++;
+      pushGame();
+      setTimeout(function(){ gameWrites--; }, 1500); // ignore our own echo briefly
+    }
+  }
+
+  // ---- render ----
+  function render(){
+    el["score-a"].textContent = game.a;
+    el["score-b"].textContent = game.b;
+    if(document.activeElement !== el["name-a"]) el["name-a"].value = game.nameA;
+    if(document.activeElement !== el["name-b"]) el["name-b"].value = game.nameB;
+
+    var scoring = canScore();
+    addBtns.forEach(function(b){ b.disabled = !scoring; });
+    el["name-a"].disabled = !scoring;
+    el["name-b"].disabled = !scoring;
+    el.undo.disabled = !scoring || game.log.length === 0;
+    el.endgame.disabled = !scoring;
+
+    el.role.className = "pill " + (role === "viewer" ? "viewing" : "scoring");
+    el["role-text"].textContent =
+      role === "scorer" ? "Scoring" : role === "viewer" ? "Live · view only" : "Solo";
+
+    var free = role === "viewer" && (Date.now() - control.renewedAt > STALE_MS);
+    el.claim.hidden = (role !== "viewer");
+    el.claim.disabled = !free;
+    el.claim.textContent = free ? "Take control" : "Locked";
+
+    var w = wins();
+    el.series.textContent = history.results.length
+      ? "Game " + game.gameNo + " · " + w.a + "–" + w.b
+      : "Game " + game.gameNo;
+
+    if(!el.sheet.hidden) renderSheet();
+  }
+
+  function wins(){
+    var a = 0, b = 0;
+    history.results.forEach(function(r){ if(r.a > r.b) a++; else if(r.b > r.a) b++; });
+    return {a:a, b:b};
+  }
+
+  function renderSheet(){
+    var w = wins();
+    el["wins-a"].textContent = w.a;
+    el["wins-b"].textContent = w.b;
+    el["games-count"].textContent = history.results.length;
+    el["wins-a-label"].textContent = game.nameA || "Home";
+    el["wins-b-label"].textContent = game.nameB || "Away";
+
+    if(!history.results.length){
+      el.log.innerHTML = '<p class="empty">No finished games yet. Tap “End game” when one wraps up and the final lands here.</p>';
+      return;
+    }
+    var rows = history.results.slice().reverse().map(function(r, i){
+      var no = history.results.length - i;
+      var who = (r.nameA || "Home") + " v " + (r.nameB || "Away");
+      return '<div class="log-row"><span class="no">' + no + '</span>' +
+             '<span class="who"></span>' +
+             '<span class="fin">' + r.a + ' – ' + r.b + '</span></div>';
+    }).join("");
+    el.log.innerHTML = rows;
+    // set names as text so a team name can never inject markup
+    var whoEls = el.log.querySelectorAll(".who");
+    history.results.slice().reverse().forEach(function(r, i){
+      whoEls[i].textContent = (r.nameA || "Home") + " v " + (r.nameB || "Away");
+    });
+  }
+
+  // ---- scoring actions ----
+  addBtns.forEach(function(btn){
     btn.addEventListener("click", function(){
-      var team = btn.dataset.team;
-      var pts = parseInt(btn.dataset.pts, 10);
-      state[team] += pts;
-      state.log.push([team, pts]);
-      if(state.log.length > 200) state.log.shift();
-      disarmReset();
+      if(!canScore()) return;
+      var team = btn.dataset.team, pts = parseInt(btn.dataset.pts, 10);
+      game[team] += pts;
+      game.log.push([team, pts]);
+      if(game.log.length > 300) game.log.shift();
+      disarmAll();
       buzz(12);
-      render(); save();
+      commit();
     });
   });
 
   el.undo.addEventListener("click", function(){
-    var last = state.log.pop();
+    if(!canScore()) return;
+    var last = game.log.pop();
     if(!last) return;
-    state[last[0]] -= last[1];
-    disarmReset();
+    game[last[0]] -= last[1];
+    disarmAll();
     buzz(12);
-    render(); save();
+    commit();
   });
 
-  var armed = false, armTimer = null;
-  function disarmReset(){
-    armed = false;
+  // two-tap confirm shared by End game
+  var armedBtn = null, armTimer = null;
+  function disarmAll(){
+    if(armedBtn){ armedBtn.classList.remove("armed"); armedBtn.textContent = armedBtn.dataset.label; }
+    armedBtn = null;
     clearTimeout(armTimer);
-    el.reset.classList.remove("armed");
-    el.reset.textContent = "Reset";
   }
-  el.reset.addEventListener("click", function(){
-    if(!armed){
-      armed = true;
-      el.reset.classList.add("armed");
-      el.reset.textContent = "Sure?";
-      armTimer = setTimeout(disarmReset, 3000);
-      return;
-    }
-    state.a = 0; state.b = 0; state.log = [];
-    disarmReset();
-    buzz([12,60,12]);
-    render(); save();
+  function arm(btn, label){
+    disarmAll();
+    btn.dataset.label = btn.dataset.label || btn.textContent;
+    btn.classList.add("armed");
+    btn.textContent = label;
+    armedBtn = btn;
+    armTimer = setTimeout(disarmAll, 3000);
+  }
+
+  el.endgame.dataset.label = "End game";
+  el.endgame.addEventListener("click", function(){
+    if(!canScore()) return;
+    if(armedBtn !== el.endgame){ arm(el.endgame, "Save final?"); return; }
+    disarmAll();
+    history.results.push({ a:game.a, b:game.b, nameA:game.nameA, nameB:game.nameB, at:Date.now() });
+    if(history.results.length > 60) history.results.shift();
+    game.gameNo += 1;
+    game.a = 0; game.b = 0; game.log = [];
+    buzz([14,70,14]);
+    if(role === "scorer") pushHistory();
+    commit();
   });
 
-  el.nameA.addEventListener("input", function(){ state.nameA = el.nameA.value; save(); });
-  el.nameB.addEventListener("input", function(){ state.nameB = el.nameB.value; save(); });
-  el.nameA.addEventListener("focus", function(){ el.nameA.select(); });
-  el.nameB.addEventListener("focus", function(){ el.nameB.select(); });
+  el.games.addEventListener("click", function(){
+    el.sheet.hidden = false;
+    renderSheet();
+  });
+  el["sheet-close"].addEventListener("click", function(){ el.sheet.hidden = true; });
+  el.sheet.addEventListener("click", function(e){ if(e.target === el.sheet) el.sheet.hidden = true; });
 
-  // Keyboard, for when it's running on a laptop at the side of the court.
+  function onName(input, field){
+    input.addEventListener("input", function(){
+      if(!canScore()) return;
+      game[field] = input.value;
+      saveLocal();
+      if(role === "scorer"){ gameWrites++; pushGame(); setTimeout(function(){ gameWrites--; }, 1500); }
+    });
+    input.addEventListener("focus", function(){ if(canScore()) input.select(); });
+  }
+  onName(el["name-a"], "nameA");
+  onName(el["name-b"], "nameB");
+
   document.addEventListener("keydown", function(e){
     if(e.target.tagName === "INPUT") return;
-    var map = { "1":["a",1], "2":["a",2], "3":["a",3], "8":["b",1], "9":["b",2], "0":["b",3] };
+    if(!canScore()) return;
+    var map = {"1":["a",1],"2":["a",2],"3":["a",3],"8":["b",1],"9":["b",2],"0":["b",3]};
     if(map[e.key]){
       var m = map[e.key];
-      state[m[0]] += m[1];
-      state.log.push([m[0], m[1]]);
-      render(); save();
+      game[m[0]] += m[1];
+      game.log.push([m[0], m[1]]);
+      commit();
     } else if(e.key === "Backspace" || e.key === "z"){
       el.undo.click();
+    } else if(e.key === "Escape"){
+      el.sheet.hidden = true;
     }
   });
 
-  function start(snap){
-    if(snap && typeof snap.a === "number"){ state = snap; }
-    else { load(); }
-    render();
+  // ---- control lease ----
+  function tryClaim(){
+    if(!ctrlRef) return Promise.resolve(false);
+    return ctrlRef.acquire({
+      holder: myId,
+      ttlMs: LEASE_MS,
+      data: { holder: myId, renewedAt: Date.now() }
+    }).then(function(r){
+      if(r && r.acquired){
+        role = "scorer";
+        startRenew();
+        // the incoming scorer's board is the one that counts
+        gameWrites++; pushGame(); setTimeout(function(){ gameWrites--; }, 1500);
+      }else{
+        role = "viewer";
+      }
+      render();
+      return !!(r && r.acquired);
+    }).catch(function(){
+      role = "viewer"; render(); return false;
+    });
   }
-  try{ window.claude && window.claude.hot && window.claude.hot.snapshot(function(){ return state; }); }catch(e){}
+
+  function startRenew(){
+    clearInterval(renewTimer);
+    renewTimer = setInterval(function(){
+      if(role !== "scorer" || !ctrlRef) return;
+      ctrlRef.acquire({
+        holder: myId, ttlMs: LEASE_MS,
+        data: { holder: myId, renewedAt: Date.now() }
+      }).then(function(r){
+        if(!(r && r.acquired)){ role = "viewer"; clearInterval(renewTimer); render(); }
+      }).catch(function(){});
+    }, RENEW_MS);
+  }
+
+  el.claim.addEventListener("click", function(){
+    el.claim.disabled = true;
+    el.claim.textContent = "…";
+    tryClaim().then(function(ok){ if(!ok) render(); });
+  });
+
+  // ---- shared store wiring ----
+  function connect(store){
+    db = store;
+    gameRef = db.doc("game/current");
+    ctrlRef = db.doc("game/control");
+    histRef = db.doc("game/history");
+
+    gameRef.onSnapshot(function(snap){
+      if(!snap.exists) return;
+      if(role === "scorer" && (gameWrites > 0 || snap.metadata.hasPendingWrites)) return;
+      var d = snap.data();
+      if(role === "scorer" && d.by === myId) return;
+      game = {
+        a: typeof d.a === "number" ? d.a : 0,
+        b: typeof d.b === "number" ? d.b : 0,
+        nameA: d.nameA || "HOME",
+        nameB: d.nameB || "AWAY",
+        log: Array.isArray(d.log) ? d.log : [],
+        gameNo: typeof d.gameNo === "number" ? d.gameNo : 1
+      };
+      saveLocal();
+      render();
+    }, function(){});
+
+    histRef.onSnapshot(function(snap){
+      if(!snap.exists) return;
+      var d = snap.data();
+      if(Array.isArray(d.results)){ history = { results: d.results }; saveLocal(); render(); }
+    }, function(){});
+
+    ctrlRef.onSnapshot(function(snap){
+      var d = snap.exists ? snap.data() : null;
+      control = {
+        holder: d && d.holder ? String(d.holder) : null,
+        renewedAt: d && typeof d.renewedAt === "number" ? d.renewedAt : 0
+      };
+      if(role === "scorer" && control.holder && control.holder !== myId){
+        role = "viewer"; clearInterval(renewTimer);
+      }
+      render();
+    }, function(){});
+
+    // First one in gets the whistle; everyone after watches.
+    tryClaim().then(function(ok){
+      if(ok && histRef){
+        histRef.get().then(function(s){
+          if(!s.exists && history.results.length) pushHistory();
+        }).catch(function(){});
+      }
+    });
+
+    // Keep the "Take control" button honest as a lease goes stale.
+    clearInterval(staleTimer);
+    staleTimer = setInterval(function(){ if(role === "viewer") render(); }, 5000);
+  }
+
+  // ---- boot ----
+  function start(snap){
+    if(snap && snap.game){ game = snap.game; if(snap.history) history = snap.history; }
+    else { loadLocal(); }
+    role = "solo";
+    render();
+
+    claudeUse("db").then(function(store){
+      if(!store){ role = "solo"; render(); return; }
+      connect(store);
+    });
+  }
+
+  function claudeUse(name){
+    try{
+      if(window.claude && typeof window.claude.use === "function") return window.claude.use(name);
+    }catch(e){}
+    return Promise.resolve(null);
+  }
+
+  try{
+    if(window.claude && window.claude.hot){
+      window.claude.hot.snapshot(function(){ return {game:game, history:history}; });
+    }
+  }catch(e){}
+
   if(window.claude && window.claude.hot && window.claude.hot.ready){
     window.claude.hot.ready(start);
-  } else {
+  }else{
     start(window.claude && window.claude.hot ? window.claude.hot.data : null);
   }
 })();
